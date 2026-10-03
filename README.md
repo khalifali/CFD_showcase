@@ -10,6 +10,16 @@ The portfolio will demonstrate geometry creation, meshing, physical modelling, n
 
 **Platform:** OpenFOAM Foundation version 13. Solver modules, models, dictionary syntax, and tutorial starting points must be checked against this exact release before implementation. This is an independent project.
 
+## Mandatory software constraint
+
+All CFD cases must use unmodified solvers, solver modules, models, boundary conditions, and runtime functionality shipped with **OpenFOAM Foundation 13**.
+
+- No custom solvers, source modifications, third-party CFD extensions, or custom compiled physics/boundary-condition libraries.
+- Geometry-generation, case-setup, execution, and visualization scripts are allowed; they do not add CFD physics.
+- Confirm each combination of physics in the version-13 source and tutorials before committing to it.
+- If a desired combination is unavailable, propose a supported alternative or simpler case for discussion. Do not implement missing physics.
+- In particular, combined VOF and species/interphase transfer remains unverified. Possible alternatives for discussion are a supported multiphase species-transport reactor or separate VOF and species-transport demonstrations.
+
 ## Planned portfolio
 
 | Case | Engineering theme | Intended physics | Main movie | Quantitative companion |
@@ -35,21 +45,21 @@ A transparent cutaway of a reactor showing the evolving liquid–gas interface a
 - Decide whether the target is liquid-phase mixing, gas–liquid transfer, or reactive conversion.
 - Preserve the requested VOF objective while assessing whether the important interfaces can be resolved at an affordable mesh size.
 - Species mixing within one phase and species transfer across an interface are separate modelling requirements.
-- Do not assume that VOF, species transport, reaction, and interphase transfer are available together in one standard OpenFOAM 13 configuration. Audit the available modules and identify any required extension first.
+- Do not assume that VOF, species transport, reaction, and interphase transfer are available together in one standard OpenFOAM 13 configuration. Audit the shipped modules and select only a supported combination; revise the proposed scope if needed.
 - A fine dispersed-bubble reactor may call for an Eulerian multiphase approach; that would be a proposed scope change requiring discussion.
 
 ### Development stages
 
 1. Establish geometry and nonreacting interface dynamics.
 2. Add conservative species transport in the intended phase.
-3. Add interphase transfer or reaction only after defining a physical model and verification target.
+3. Add interphase transfer or reaction only if supported by the selected stock OpenFOAM 13 configuration, with a defined verification target.
 4. Compare one meaningful design or operating choice.
 
 ### Evidence to show
 
 Phase-volume conservation, bounded phase fractions and concentrations, species mass balance, and sensitivity of a chosen output to mesh and timestep. Report mixing time, uptake, or conversion only when the corresponding physics is included.
 
-**Relative effort:** high, particularly if coupled VOF and interphase species transfer require development.
+**Relative effort:** provisional medium to high, depending on the supported configuration selected. Custom development is excluded.
 
 ## 2. Drone aerodynamics
 
@@ -116,7 +126,7 @@ A compact district inspired by Middle Eastern urban layouts, with a defined poll
 - Establish atmospheric inflow, ground roughness, and consistent turbulence boundary conditions.
 - Begin with a dilute passive gaseous pollutant.
 - Select a traffic-like line source or a defined point source.
-- Treat dust settling, deposition, and chemical reactions as possible later extensions, each requiring additional models.
+- Consider dust settling, deposition, and chemical reactions later only where the selected stock OpenFOAM 13 configuration supports them.
 
 ### Development stages
 
@@ -146,7 +156,7 @@ Before implementation, select the first case and agree on its minimum credible s
 ## Common workflow for every case
 
 1. **Case brief:** physical question, geometry, operating conditions, assumptions, and comparison.
-2. **OpenFOAM 13 audit:** exact solver/module, supported models, tutorial reference, and any missing functionality.
+2. **OpenFOAM 13 audit:** exact shipped solver/module, compatible built-in models, and version-13 tutorial reference. Resolve missing functionality by revising the scope.
 3. **Geometry and mesh:** reproducible source, named boundaries, refinement strategy, and mesh-quality report.
 4. **Pilot run:** confirm stability, conservation, outputs, and compute cost.
 5. **Verification:** check the quantities that support the intended claim; perform targeted mesh/timestep checks.
