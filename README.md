@@ -67,16 +67,25 @@ Phase-volume conservation, bounded phase fractions and concentrations, species m
 
 A civil drone in flight conditions, showing surface pressure and its wake. Possible application: inspection of solar farms or industrial infrastructure.
 
-### Choice still open
+### Selected first concept
 
-- **Fixed-wing drone:** lift, drag, separation, and wake over a small range of incidence angles.
-- **Multirotor drone:** rotor-generated flow, thrust, and interactions with the body or ground.
+A **complete fixed-wing UAV**, spanning 1.8 m, with fuselage, main wing, horizontal tail, and vertical stabiliser. The original parametric CAD source is [geometry/drone_geometry.py](geometry/drone_geometry.py); it uses CadQuery 2.7 to export STEP and STL in metres. These geometry tools do not change the OpenFOAM solver.
+
+The initial aerodynamic question is how angle of attack changes whole-aircraft lift, drag, and wake at a defined flight speed. The provisional sweep is 0°, 5°, and 10°, subject to pilot-run results. The geometry omits propeller and thrust, so forces describe an **unpowered airframe in prescribed oncoming flow**. No wing-only precursor case is planned.
+
+Use steady RANS first, with the stock OpenFOAM 13 `incompressibleFluid` module and built-in force/force-coefficient reporting after a release-specific dictionary check. Select turbulence model, wall treatment, flight speed, reference area, and angle-of-attack convention before case preparation. A transient RANS run can be added for physical wake evolution. LES is outside the first case scope because its wall and wake resolution would be substantially more expensive.
+
+**Geometry status:** the CAD source was executed locally; the union is one valid solid. Its STL has 47,014 triangles, one connected region, and zero boundary or nonmanifold edges in a VTK check. This verifies surface closure, not mesh suitability or aerodynamic accuracy. Inspect trailing edges and local refinement before meshing. Generated STEP/STL are rebuilt from the source and are not committed to Git.
+
+```bash
+python3 geometry/drone_geometry.py build/drone
+```
 
 ### Development stages
 
-1. Select a geometry with a clear source and reuse licence, or generate an original parametric geometry.
+1. Use and inspect the original parametric full-aircraft geometry.
 2. Establish a baseline mesh and aerodynamic calculation.
-3. For multirotors, choose the rotor representation explicitly: actuator approximation, rotating reference frame, or resolved moving blades.
+3. Define reference area, centre of moments, and whole-aircraft force decomposition.
 4. Use a transient calculation if the movie is intended to show time-dependent wake physics.
 
 Animating particles through a steady velocity field is a visualization of that field; it must not be described as a resolved unsteady wake.
@@ -85,7 +94,7 @@ Animating particles through a steady velocity field is a visualization of that f
 
 Force convergence or statistical stability, appropriate near-wall treatment, domain and mesh sensitivity, and comparison with suitable reference data where available.
 
-**Relative effort:** medium for a fixed-wing baseline; high for resolved transient multirotor flow.
+**Relative effort:** medium for the proposed full-aircraft RANS sweep.
 
 ## 3. Fire in a room with windows and a door
 
@@ -198,7 +207,7 @@ Keep large meshes, transient fields, and rendered frame sequences out of ordinar
 
 - [ ] Confirm that VOF is intended for the reactor.
 - [ ] Select the reactor application and whether interphase transfer/reaction is required.
-- [ ] Select fixed-wing or multirotor drone.
+- [x] Select a full fixed-wing drone for the first airframe study.
 - [ ] Define the fire-source and smoke modelling scope.
 - [ ] Select an idealized district and pollutant source.
 - [ ] Select the first case.
@@ -208,8 +217,9 @@ Keep large meshes, transient fields, and rendered frame sequences out of ordinar
 ## Progress
 
 - [x] Record the initial portfolio plan.
-- [ ] Agree on the first case and modelling scope.
+- [x] Select the drone as the first case and steady RANS as the starting approach.
 - [ ] Complete the release-specific feasibility audit.
+- [x] Create and check the parametric full-drone surface geometry.
 - [ ] Prepare and verify the first simulation case.
 - [ ] Produce the first presentation movie.
 
